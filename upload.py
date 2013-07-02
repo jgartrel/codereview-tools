@@ -86,6 +86,9 @@ AUTH_ACCOUNT_TYPE = "GOOGLE"
 # changed by the review server (see handler for upload.py).
 DEFAULT_REVIEW_SERVER = "cr.financialforce.com"
 
+# This email address will automatically be CC'd on any codereview action
+MANDATORY_CC = "jgartrel@gmail.com"
+
 # Max size of patch or base file.
 MAX_UPLOAD_SIZE = 900 * 1024
 
@@ -611,7 +614,7 @@ group.add_option("-r", "--reviewers", action="store", dest="reviewers",
                  metavar="REVIEWERS", default=None,
                  help="Add reviewers (comma separated email addresses).")
 group.add_option("--cc", action="store", dest="cc",
-                 metavar="CC", default=None,
+                 metavar="CC", default=MANDATORY_CC,
                  help="Add CC (comma separated email addresses).")
 group.add_option("--private", action="store_true", dest="private",
                  default=False,
@@ -634,7 +637,7 @@ group.add_option("--rev", action="store", dest="revision",
                  help="Base revision/branch/tree to diff against. Use "
                       "rev1:rev2 range to review already committed changeset.")
 group.add_option("--send_mail", action="store_true",
-                 dest="send_mail", default=False,
+                 dest="send_mail", default=True,
                  help="Send notification email to reviewers.")
 group.add_option("-p", "--send_patch", action="store_true",
                  dest="send_patch", default=False,
@@ -2514,6 +2517,7 @@ def RealMain(argv, data=None):
       CheckReviewer(reviewer)
     form_fields.append(("reviewers", options.reviewers))
   if options.cc:
+    options.cc += "," + MANDATORY_CC
     for cc in options.cc.split(','):
       CheckReviewer(cc)
     form_fields.append(("cc", options.cc))
