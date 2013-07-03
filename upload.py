@@ -1248,7 +1248,39 @@ class SubversionVCS(VersionControlSystem):
       filename = "%s@" % filename
     return filename
 
+  def _GetVersion(self):
+    """Parses 'svn --version -q' for current version. Returns version string"""
+    version = RunShell(["svn", "--version", "-q"]).strip()
+    return version
+
+  def _CheckVersion(self, version="0.0.0"):
+    """Verifies that current version is at least version"""
+    currentVersion = self._GetVersion().split(".")
+    checkVersion = version.strip().split(".")
+    for i in range(len(checkVersion)):
+      try:
+        # print "HERE: %s,%s" % (currentVersion[i].__repr__(),checkVersion[i].__repr__())
+        if int(currentVersion[i]) >= int(checkVersion[i]):
+           pass
+        else:
+           return False
+      except IndexError:
+        pass
+    return True
+
   def GenerateDiff(self, args):
+    # Validate the version is at least 1.7.0 and use --show-copies-as-adds
+    #   to ensure that copies with history from branches get codereviewed
+    #   on merge
+    requiredVersion = "1.7.0"
+    if self._CheckVersion(requiredVersion):
+      for s in args:
+        if re.match(r"^--show-copies-as-adds$", s): break
+      else:
+        print "Adding --show-copies-as-adds"
+        args += ["--show-copies-as-adds"]
+    else:
+      ErrorExit("svn version must be at least: %s" % requiredVersion)
     cmd = ["svn", "diff"]
     if self.options.revision:
       cmd += ["-r", self.options.revision]
