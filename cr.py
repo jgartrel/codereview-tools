@@ -1281,7 +1281,7 @@ class SubversionVCS(VersionControlSystem):
         args += ["--show-copies-as-adds"]
     else:
       ErrorExit("svn version must be at least: %s" % requiredVersion)
-    cmd = ["svn", "diff"]
+    cmd = ["svn", "diff","--internal-diff"]
     if self.options.revision:
       cmd += ["-r", self.options.revision]
     cmd.extend(args)
