@@ -87,7 +87,7 @@ AUTH_ACCOUNT_TYPE = "GOOGLE"
 DEFAULT_REVIEW_SERVER = "cr.financialforce.com"
 
 # This email address will automatically be CC'd on any codereview action
-MANDATORY_CC = "jgartrel@gmail.com"
+MANDATORY_CC = "codereview@financialforce.com"
 
 # Max size of patch or base file.
 MAX_UPLOAD_SIZE = 900 * 1024
